@@ -5,6 +5,7 @@ HELP_TEXT = """Commands:
 list                      - List all seats
 reserve <seat_id> <name>  - Reserve a seat
 cancel <seat_id> [name]   - Cancel a reservation
+rename <seat_id> <name>   - Change reserver name
 status <seat_id>          - Show seat status
 stats                     - Show summary stats
 help                      - Show this help
@@ -43,6 +44,10 @@ def run_cli():
                 _require_args(command, args, 1)
                 name = args[1] if len(args) > 1 else None
                 seat_id, name = store.cancel(int(args[0]), name)
+                _print_seat(seat_id, name)
+            elif command == "rename":
+                _require_args(command, args, 2)
+                seat_id, name = store.rename(int(args[0]), args[1])
                 _print_seat(seat_id, name)
             elif command == "status":
                 _require_args(command, args, 1)

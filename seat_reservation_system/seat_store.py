@@ -20,6 +20,13 @@ class SeatStore:
             raise ValueError("Name does not match the reservation.")
         self._seats[seat_id] = None
         return seat_id, None
+    
+    def rename(self, seat_id, new_name):
+        current = self._get(seat_id)
+        if current is None:
+            raise ValueError("Seat is not reserved")
+        self._seats[seat_id] = new_name
+        return seat_id, new_name
 
     def status(self, seat_id):
         return seat_id, self._get(seat_id)
@@ -33,3 +40,5 @@ class SeatStore:
         if seat_id not in self._seats:
             raise ValueError("Seat does not exist.")
         return self._seats[seat_id]
+    
+    
