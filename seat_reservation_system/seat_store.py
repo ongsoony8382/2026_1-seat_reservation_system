@@ -1,6 +1,7 @@
 class SeatStore:
     def __init__(self, seat_ids):
         self._seats = {seat_id: None for seat_id in seat_ids}
+        self._waitlists = {seat_id: [] for seat_id in seat_ids}
 
     def list_seats(self):
         return self._seats.items()
@@ -11,6 +12,22 @@ class SeatStore:
             raise ValueError("Seat is already reserved.")
         self._seats[seat_id] = name
         return seat_id, name
+    
+    def wait(self, seat_id, name):
+        current = self._get(seat_id)
+        if current is None:
+            raise ValueError("Seat is available. Reserve it directly.")
+
+        if current == name:
+            raise ValueError("Current reserver cannot join the waitlist.")
+
+        waitlist = self._waitlists[seat_id]
+
+        if name in waitlist:
+            raise ValueError("Name is already in the waitlist.")
+
+        waitlist.append(name)
+        return seat_id, name
 
     def cancel(self, seat_id, name=None):
         current = self._get(seat_id)
@@ -18,6 +35,12 @@ class SeatStore:
             raise ValueError("Seat is not reserved.")
         if name and current != name:
             raise ValueError("Name does not match the reservation.")
+        
+        if self._waitlists[seat_id]:
+            next_name = self._waitlists[seat_id].pop(0)
+            self._seats[seat_id] = next_name
+            return seat_id, next_name
+        
         self._seats[seat_id] = None
         return seat_id, None
 

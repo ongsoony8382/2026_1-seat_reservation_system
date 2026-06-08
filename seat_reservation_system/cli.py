@@ -4,6 +4,7 @@ from seat_reservation_system.seats import SEAT_IDS
 HELP_TEXT = """Commands:
 list                      - List all seats
 reserve <seat_id> <name>  - Reserve a seat
+wait <seat_id> <name>     - Add name to seat waitlist
 cancel <seat_id> [name]   - Cancel a reservation
 status <seat_id>          - Show seat status
 stats                     - Show summary stats
@@ -39,6 +40,10 @@ def run_cli():
                 _require_args(command, args, 2)
                 seat_id, name = store.reserve(int(args[0]), args[1])
                 _print_seat(seat_id, name)
+            elif command == "wait":
+                _require_args(command, args, 2)
+                seat_id, name = store.wait(int(args[0]), args[1])
+                print(f"{name} added to waitlist for Seat {seat_id}")
             elif command == "cancel":
                 _require_args(command, args, 1)
                 name = args[1] if len(args) > 1 else None
