@@ -1,6 +1,20 @@
+from datetime import datetime
+
 class SeatStore:
     def __init__(self, seat_ids):
         self._seats = {seat_id: None for seat_id in seat_ids}
+        self._activities = []
+
+    def _add_activity(self, action, seat_id, name):
+        self._activities.append({
+            "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "action": action,
+            "seat_id": seat_id,
+            "name": name,
+        })
+
+    def activities(self):
+        return list(self._activities)
 
     def list_seats(self):
         return self._seats.items()
@@ -10,6 +24,7 @@ class SeatStore:
         if current is not None:
             raise ValueError("Seat is already reserved.")
         self._seats[seat_id] = name
+        self._add_activity("RESERVE", seat_id, name)
         return seat_id, name
 
     def cancel(self, seat_id, name=None):
@@ -19,6 +34,7 @@ class SeatStore:
         if name and current != name:
             raise ValueError("Name does not match the reservation.")
         self._seats[seat_id] = None
+        self._add_activity("CANCEL", seat_id, current)
         return seat_id, None
 
     def status(self, seat_id):

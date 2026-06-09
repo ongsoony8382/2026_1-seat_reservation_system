@@ -5,6 +5,7 @@ HELP_TEXT = """Commands:
 list                      - List all seats
 reserve <seat_id> <name>  - Reserve a seat
 cancel <seat_id> [name]   - Cancel a reservation
+activities                - Show reservation activity history
 status <seat_id>          - Show seat status
 stats                     - Show summary stats
 help                      - Show this help
@@ -44,6 +45,18 @@ def run_cli():
                 name = args[1] if len(args) > 1 else None
                 seat_id, name = store.cancel(int(args[0]), name)
                 _print_seat(seat_id, name)
+            elif command == "activities":
+                activities = store.activities()
+
+                if not activities:
+                    print("No activities.")
+                else:
+                    for activity in activities:
+                        print(
+                            f"[{activity['time']}] "
+                            f"{activity['action']} "
+                            f"{activity['seat_id']} - {activity['name']}"
+                        )
             elif command == "status":
                 _require_args(command, args, 1)
                 seat_id, name = store.status(int(args[0]))
